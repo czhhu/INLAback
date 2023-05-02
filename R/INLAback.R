@@ -76,7 +76,7 @@ INLAback<-function(fam1 = "gaussian",
           ii <-
             {
               -1 * ii
-            } # Drop each variable in turn. Final run is ii == 9999 and therefore do all variables.
+            } 
         }
       }
 
@@ -132,10 +132,9 @@ INLAback<-function(fam1 = "gaussian",
             )
           )
       }
-    }##end of run through
+    }
 
     new1 <- choice[which.min(choice$aic), 1]
-    # If not the first time through, calculate dic loss
     if (!is.null(dicold)) {
       dicloss <- dicold - min(choice$aic, na.rm = TRUE)[1]
     }
