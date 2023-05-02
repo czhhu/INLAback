@@ -35,7 +35,7 @@ INLAback<-function(fam1 = "gaussian",
   if (is.null(y)) {
     stop("no y variable")
   }
-  if (class(dataf) == "data.frame") {
+  if (class(dataf) != "data.frame") {
     stop("data is not a data frame")
   }
 
@@ -56,7 +56,6 @@ INLAback<-function(fam1 = "gaussian",
   expl <- expandExplanatoryVars(expl, explF, facts)
 
   choice <- NULL
-  chosen <- NULL
   new1 <- NULL
   dicloss <- 999
   dicold <- NULL
@@ -81,7 +80,6 @@ INLAback<-function(fam1 = "gaussian",
         }
       }
 
-      if (is.null(chosen)) {
         if (length(expl[ii]) > 0) {
           formula2 <-
             formula(paste(y, "~", invariant, "+", paste(expl[ii], collapse = "+"), sep =
@@ -89,14 +87,6 @@ INLAback<-function(fam1 = "gaussian",
         } else {
           formula2 <- formula(paste(y, "~", invariant))
         }
-      } else{
-        if (length(expl[ii]) > 0) {
-          formula2 <-
-            formula(paste(y, "~", invariant, "+", chosen, " + ", expl[ii], sep = ""))
-        } else {
-          formula2 <- formula(paste(y, "~", invariant, "+", chosen))
-        }
-      }
 
       result2 <- INLA::inla(
         formula2,
@@ -166,15 +156,6 @@ INLAback<-function(fam1 = "gaussian",
       if (direction == "backwards") {
         expl <- expl[!expl == new1]
       }
-      if (direction == "forwards") {
-        if (is.null(chosen)) {
-          chosen <- new1
-          expl <- expl[!expl == new1]
-        } else {
-          chosen <- paste(chosen, " + ", new1, sep = "")
-          expl <- expl[!expl == new1]
-        }
-      }
     } else {
       break
     }
@@ -184,13 +165,7 @@ INLAback<-function(fam1 = "gaussian",
   if (direction == "backwards") {
     formulax <-
       formula(paste(y, "~", invariant, "+", paste(expl[ii], collapse = "+"), sep = ""))
-  } else {
-    if(!is.null(chosen)){
-      formulax <- formula(paste(y, "~", invariant, "+", chosen, sep = ""))
-    } else {
-      formulax <- formula(paste(y, "~", invariant, sep = ""))
-    }
-  }
+  } 
   #print(formulax)
 
   result2 <- INLA::inla(
